@@ -7,9 +7,12 @@ import urlparse
 
 from calibre.customize import StoreBase
 from calibre.devices.usbms.driver import debug_print
+from calibre.gui2 import open_url
 from calibre.gui2.store import StorePlugin
 from calibre.gui2.store.search_result import SearchResult
+from calibre.gui2.store.web_store_dialog import WebStoreDialog
 from calibre.utils.config import config_dir
+from PyQt5.Qt import QUrl
 
 from .the_eye import TheEye
 
@@ -43,6 +46,7 @@ class TheEyeStorePlugin(StorePlugin):
             s.title = stem
             s.author = ''
             s.price = '0.00'
+            s.detail_item = result
             s.drm = SearchResult.DRM_UNLOCKED
             s.formats = extension.upper()
             s.downloads[extension.upper()] = result
@@ -50,8 +54,17 @@ class TheEyeStorePlugin(StorePlugin):
             yield s
 
     def open(self, parent=None, detail_item=None, external=False):
-        debug_print('open')
-        pass
+        debug_print('Opening ', detail_item)
+        parent_url = '/'.join(detail_item.split('/')[0:-1])
+
+        if external or self.config.get('open_external', False):
+            open_url(QUrl(parent_url))
+        else:
+            d = WebStoreDialog(
+                self.gui, self.eye.base_url, parent, parent_url)
+            d.setWindowTitle(self.name)
+            d.set_tags(self.config.get('tags', ''))
+            d.exec_()
 
 class TheEyeStore(StoreBase):
     name = 'The Eye'
