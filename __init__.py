@@ -6,6 +6,7 @@ import os
 import urlparse
 
 from calibre.customize import StoreBase
+from calibre.devices.usbms.driver import debug_print
 from calibre.gui2.store import StorePlugin
 from calibre.gui2.store.search_result import SearchResult
 from calibre.utils.config import config_dir
@@ -18,10 +19,11 @@ __docformat__ = 'restructuredtext en'
 
 class TheEyeStorePlugin(StorePlugin):
     def genesis(self):
-        # print('TheEyeStorePlugin:genesis: Initializing self.eye')
         self.eye = TheEye(
             base_url='https://the-eye.eu/public/Books/Calibre_Libraries/',
             index_file=os.path.join(config_dir, 'plugins', 'The Eye.json.gz'))
+
+        debug_print('Initialized self.eye')
 
     def search(self, query, max_results=10, timeout=60):
         search_results = self.eye.search(query)
@@ -29,7 +31,7 @@ class TheEyeStorePlugin(StorePlugin):
         for result in search_results[0:max_results]:
             parsed = urlparse.unquote(result)
 
-            # print('TheEyeStorePlugin:search: parsed =', parsed)
+            debug_print('parsed = ', parsed)
 
             filename = parsed.split('/')[-1]
             stem = '.'.join(filename.split('.')[0:-1])
@@ -43,11 +45,10 @@ class TheEyeStorePlugin(StorePlugin):
             s.formats = extension.upper()
             s.downloads[extension.upper()] = result
 
-            # print('TheEyeStorePlugin:search: s =', s, sep='\n')
-
             yield s
 
     def open(self, parent=None, detail_item=None, external=False):
+        debug_print('open')
         pass
 
 class TheEyeStore(StoreBase):
