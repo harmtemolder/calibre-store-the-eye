@@ -32,7 +32,7 @@ class TheEyeStorePlugin(StorePlugin):
     def search(self, query, max_results=10, timeout=60):
         search_results = self.eye.search(query)
 
-        for result in search_results:
+        for result in search_results[0:max_results]:
             parsed = urlparse.unquote(result)
 
             print('TheEyeStorePlugin:search: parsed =', parsed)
