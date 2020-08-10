@@ -1,3 +1,3 @@
 #!/bin/sh
 
-zip the_eye.zip *.py
+zip 'The Eye.zip' *.py
