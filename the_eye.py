@@ -5,6 +5,7 @@ Eye's open directory. Technically it is not limited to e-books, but that
 is what I will use it for.
 """
 
+import gzip
 import itertools
 import json
 import os
@@ -16,7 +17,7 @@ from bs4 import BeautifulSoup
 class TheEye:
     def __init__(self,
                  base_url='https://the-eye.eu/public/Books/Calibre_Libraries/',
-                 index_file='./the_eye.json'):
+                 index_file='./the_eye.json.gz'):
         # print('the_eye.py:TheEye:__init__: begin')
 
         self.base_url = base_url
@@ -34,13 +35,10 @@ class TheEye:
         # print('the_eye.py:TheEye:load_index')
 
         if os.path.isfile(self.index_file):
-            with open(self.index_file, mode='rb') as index_json:
-                self.index = json.load(index_json)
+            with gzip.open(self.index_file, mode='rb') as index_json:
+                self.index = json.loads(index_json.read())
         else:
             self.refresh_index()
-
-            with open(self.index_file, mode='wb') as index_json:
-               index_json.write(json.dumps(self.index, indent=4))
 
         # print('the_eye.py:TheEye:load_index: len(self.index) =', str(len(self.index)))
 
@@ -117,8 +115,8 @@ class TheEye:
 
         self.index = self._crawl_links(self.base_url)
 
-        # with open(self.index_file, mode='wb') as index_json: TODO
-        #     index_json.write(json.dumps(self.index, indent=4))
+        with gzip.open(self.index_file, mode='wb') as index_json:
+            index_json.write(json.dumps(self.index, indent=4))
 
         # return self.index
 

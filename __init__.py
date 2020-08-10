@@ -21,7 +21,7 @@ class TheEyeStorePlugin(StorePlugin):
         # print('TheEyeStorePlugin:genesis: Initializing self.eye')
         self.eye = TheEye(
             base_url='https://the-eye.eu/public/Books/Calibre_Libraries/',
-            index_file=os.path.join(config_dir, 'plugins', 'The Eye.json'))
+            index_file=os.path.join(config_dir, 'plugins', 'The Eye.json.gz'))
 
     def search(self, query, max_results=10, timeout=60):
         search_results = self.eye.search(query)

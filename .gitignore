@@ -1,6 +1,7 @@
 # Project-specific
 *.pkl
 *.json
+*.gz
 *.zip
 calibre
 
