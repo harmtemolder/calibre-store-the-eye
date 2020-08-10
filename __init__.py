@@ -19,6 +19,8 @@ __docformat__ = 'restructuredtext en'
 
 class TheEyeStorePlugin(StorePlugin):
     def genesis(self):
+        debug_print('Initializing self.eye, loading or creating index')
+
         self.eye = TheEye(
             base_url='https://the-eye.eu/public/Books/Calibre_Libraries/',
             index_file=os.path.join(config_dir, 'plugins', 'The Eye.json.gz'))
@@ -26,7 +28,7 @@ class TheEyeStorePlugin(StorePlugin):
         debug_print('Initialized self.eye')
 
     def search(self, query, max_results=10, timeout=60):
-        search_results = self.eye.search(query)
+        search_results = self.eye.search(query, format='EPUB')
 
         for result in search_results[0:max_results]:
             parsed = urlparse.unquote(result)

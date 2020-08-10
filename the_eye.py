@@ -120,7 +120,7 @@ class TheEye:
 
         # return self.index
 
-    def search(self, query, mode='all'):
+    def search(self, query, mode='all', format='EPUB'):
         """Search the index for any or all words in the given query
         (split on spaces), ignoring case. Returns a list of matching items
 
@@ -148,7 +148,11 @@ class TheEye:
                 ])
             ]
 
-        return matches
+        format_matches = [
+            m for m in matches
+            if m.split('.')[-1].lower() == format.lower()
+        ]
+        return format_matches
 
 
 if __name__ == '__main__':
@@ -157,4 +161,4 @@ if __name__ == '__main__':
     # Make sure to refresh the index after changing the base URL
     # eye.refresh_index()
 
-    print('\n'.join(eye.search('gandhi biography')))
+    print('\n'.join(eye.search('gandhi biography', format='MOBI')))
