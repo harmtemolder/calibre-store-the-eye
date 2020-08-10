@@ -1,6 +1,8 @@
 # Project-specific
 *.pkl
 *.json
+*.zip
+calibre
 
 # PyCharm
 .idea
