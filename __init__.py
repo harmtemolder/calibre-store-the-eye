@@ -2,11 +2,13 @@
 from __future__ import absolute_import, division, print_function,\
     unicode_literals
 
+import os
 import urlparse
 
 from calibre.customize import StoreBase
 from calibre.gui2.store import StorePlugin
 from calibre.gui2.store.search_result import SearchResult
+from calibre.utils.config import config_dir
 
 from .the_eye import TheEye
 
@@ -25,7 +27,7 @@ class TheEyeStorePlugin(StorePlugin):
 
         self.eye = TheEye(
             base_url='https://the-eye.eu/public/Books/Calibre_Libraries/',
-            index_file='./the_eye.json')
+            index_file=os.path.join(config_dir, 'plugins', 'The Eye.json'))
 
     def search(self, query, max_results=10, timeout=60):
         search_results = self.eye.search(query)
