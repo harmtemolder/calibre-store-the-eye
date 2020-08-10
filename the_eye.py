@@ -17,13 +17,13 @@ class TheEye:
     def __init__(self,
                  base_url='https://the-eye.eu/public/Books/Calibre_Libraries/',
                  index_file='./the_eye.json'):
-        print('the_eye.py:TheEye:__init__: begin')
+        # print('the_eye.py:TheEye:__init__: begin')
 
         self.base_url = base_url
         self.index_file = index_file
         self.load_index()
 
-        print('the_eye.py:TheEye:__init__: complete')
+        # print('the_eye.py:TheEye:__init__: complete')
 
     def load_index(self):
         """Tries to load a local index from a JSON file. Creates a new
@@ -31,7 +31,7 @@ class TheEye:
 
         :return: the index as a list of URLs pointing to files
         """
-        print('the_eye.py:TheEye:load_index')
+        # print('the_eye.py:TheEye:load_index')
 
         if os.path.isfile(self.index_file):
             with open(self.index_file, mode='rb') as index_json:
@@ -42,7 +42,7 @@ class TheEye:
             with open(self.index_file, mode='wb') as index_json:
                index_json.write(json.dumps(self.index, indent=4))
 
-        print('the_eye.py:TheEye:load_index: len(self.index) =', str(len(self.index)))
+        # print('the_eye.py:TheEye:load_index: len(self.index) =', str(len(self.index)))
 
         # return self.index
 
@@ -52,7 +52,7 @@ class TheEye:
         :param url: str pointing to a page within The Eye's /public/
         :return: list of hrefs on the page, within <pre>
         """
-        print('the_eye.py:TheEye:_get_links: url =', url)
+        # print('the_eye.py:TheEye:_get_links: url =', url)
 
         r = urllib2.urlopen(urllib2.Request(
             url,
@@ -89,7 +89,7 @@ class TheEye:
         :param url: str pointing to a page to start crawling from
         :return: list of URLs of files (i.e. URLs not ending in '/')
         """
-        print('the_eye.py:TheEye:_crawl_links: url =', url)
+        # print('the_eye.py:TheEye:_crawl_links: url =', url)
 
         links = self._get_links(url)
 
@@ -113,7 +113,7 @@ class TheEye:
         :return: the index, loaded as one-dimensional list of URLs of
                  files
         """
-        print('the_eye.py:TheEye:refresh_index')
+        # print('the_eye.py:TheEye:refresh_index')
 
         self.index = self._crawl_links(self.base_url)
 
@@ -131,7 +131,7 @@ class TheEye:
                      present to match. Defaults to 'all'
         :return: list of matching items
         """
-        print('the_eye.py:TheEye:search: query =', query)
+        # print('the_eye.py:TheEye:search: query =', query)
 
         keywords = query.split(' ')
 

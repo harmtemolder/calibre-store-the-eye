@@ -1,6 +1,6 @@
 #!/usr/bin/env python2
-from __future__ import absolute_import, division, print_function,\
-    unicode_literals
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals)
 
 import os
 import urlparse
@@ -18,13 +18,7 @@ __docformat__ = 'restructuredtext en'
 
 class TheEyeStorePlugin(StorePlugin):
     def genesis(self):
-        print('TheEyeStorePlugin:genesis: Read config:', self.config)
-
-        if 'index' in self.config:
-            index = self.config.index
-
-        print('TheEyeStorePlugin:genesis: Initializing self.eye')
-
+        # print('TheEyeStorePlugin:genesis: Initializing self.eye')
         self.eye = TheEye(
             base_url='https://the-eye.eu/public/Books/Calibre_Libraries/',
             index_file=os.path.join(config_dir, 'plugins', 'The Eye.json'))
@@ -35,20 +29,21 @@ class TheEyeStorePlugin(StorePlugin):
         for result in search_results[0:max_results]:
             parsed = urlparse.unquote(result)
 
-            print('TheEyeStorePlugin:search: parsed =', parsed)
+            # print('TheEyeStorePlugin:search: parsed =', parsed)
 
             filename = parsed.split('/')[-1]
+            stem = '.'.join(filename.split('.')[0:-1])
             extension = filename.split('.')[-1]
 
             s = SearchResult()
-            s.title = filename
+            s.title = stem
             s.author = ''
             s.price = '0.00'
             s.drm = SearchResult.DRM_UNLOCKED
             s.formats = extension.upper()
             s.downloads[extension.upper()] = result
 
-            print('TheEyeStorePlugin:search: s =', s, sep='\n')
+            # print('TheEyeStorePlugin:search: s =', s, sep='\n')
 
             yield s
 
