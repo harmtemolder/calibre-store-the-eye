@@ -100,7 +100,7 @@ class TheEye:
             return files
 
         files = files + list(itertools.chain.from_iterable([
-            self._crawl_links(p) for p in pages[0:2]]))  # TODO remove cap
+            self._crawl_links(p) for p in pages]))
 
         return files
 
