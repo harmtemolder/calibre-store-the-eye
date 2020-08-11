@@ -4,6 +4,8 @@
 Eye's open directory. Technically it is not limited to e-books, but that
 is what I will use it for.
 """
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals)
 
 import gzip
 import itertools

@@ -1,4 +1,5 @@
 #!/usr/bin/env python2
+
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
@@ -15,12 +16,13 @@ from calibre.utils.config import config_dir
 from PyQt5.Qt import QUrl
 
 from .the_eye import TheEye
+from .config import TheEyeStoreConfig
 
 __license__ = 'GNU GPLv3'
 __copyright__ = '2020, harmtemolder <mail at harmtemolder.com>'
 __docformat__ = 'restructuredtext en'
 
-class TheEyeStorePlugin(StorePlugin):
+class TheEyeStorePlugin(TheEyeStoreConfig, StorePlugin):
     def initialize(self):
         """Called once when calibre plugins are initialized. Plugins are
         re-initialized every time a new plugin is added.
@@ -65,35 +67,6 @@ class TheEyeStorePlugin(StorePlugin):
 
         self.eye.refresh_index()  # TODO
 
-    def config_widget(self):
-        """See :class:`calibre.customize.Plugin` for details.
-
-        :return: None
-        """
-        debug_print('The Eye::__init__.py:config_widget:locals() =', locals())
-
-        raise NotImplementedError()
-
-        # return ('not implemented', 'please come again later')
-
-    def save_settings(self, config_widget):
-        """See :class:`calibre.customize.Plugin` for details.
-
-        :return: None
-        """
-        debug_print('The Eye::__init__.py:save_settings:locals() =', locals())
-
-        raise NotImplementedError()
-
-    def customization_help(self, gui=False):
-        """See :class:`calibre.customize.Plugin` for details.
-
-        :return: None
-        """
-        debug_print('The Eye::__init__.py:customization_help:locals() =',
-                    locals())
-
-        raise NotImplementedError()
 
     def search(self, query, max_results=10, timeout=60):
         """A generator that yields SearchResult objects. It searches
