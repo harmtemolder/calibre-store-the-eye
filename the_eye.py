@@ -5,7 +5,7 @@ Eye's open directory. Technically it is not limited to e-books, but that
 is what I will use it for.
 """
 from __future__ import (absolute_import, division, print_function,
-                        unicode_literals)
+    unicode_literals)
 
 import gzip
 import itertools
@@ -15,7 +15,6 @@ import urllib2
 
 from bs4 import BeautifulSoup
 
-# from calibre.devices.usbms.driver import debug_print
 
 class TheEye:
     def __init__(self,
@@ -44,12 +43,10 @@ class TheEye:
         :param url: str pointing to a page within The Eye's /public/
         :return: list of hrefs on the page, within <pre>
         """
-        r = urllib2.urlopen(urllib2.Request(
-            url,
-            headers={'User-agent':'Mozilla/5.0 (Windows NT 10.0; ) AppleWebKit/'
-                                  '537.36 (KHTML, like Gecko) Chrome/83.0.4086.'
-                                  '0 Safari/537.36'}
-        ))
+        r = urllib2.urlopen(urllib2.Request(url, headers={
+            'User-agent':'Mozilla/5.0 (Windows NT 10.0; ) AppleWebKit/'
+                         '537.36 (KHTML, like Gecko) Chrome/83.0.4086.'
+                         '0 Safari/537.36'}))
 
         soup = BeautifulSoup(r.read(), 'html.parser')
         r.close()
@@ -82,8 +79,8 @@ class TheEye:
         if len(pages) == 0:
             return files
 
-        files = files + list(itertools.chain.from_iterable([
-            self._crawl_links(p) for p in pages]))
+        files = files + list(itertools.chain.from_iterable(
+            [self._crawl_links(p) for p in pages]))
 
         return files
 
@@ -93,15 +90,14 @@ class TheEye:
         Calibre, this index needs to be stored in a JSON file. This
         function refreshes that local index.
 
-        :return: the index, loaded as one-dimensional list of URLs of
-                 files
+        :return: None
         """
         self.index = self._crawl_links(self.base_url)
 
         with gzip.open(self.index_file, mode='wb') as index_json:
             index_json.write(json.dumps(self.index, indent=4))
 
-    def search(self, query, mode='all', format='EPUB'):
+    def search(self, query, mode='all', format='ALL'):
         """Search the index for any or all words in the given query
         (split on spaces), ignoring case. Returns a list of matching items
 
@@ -110,28 +106,21 @@ class TheEye:
                      present to match. Defaults to 'all'
         :return: list of matching items
         """
-        keywords = query.split(' ')
+        query_split = query.lower().split(' ')
+        format_split = [f.strip() for f in format.lower().split(',')]
 
         if mode == 'any':
-            matches = [
-                i for i in self.index
-                if any([
-                    k.lower() in i.lower() for k in keywords
-                ])
-            ]
+            matches = [i for i in self.index if
+                any([q in i.lower() for q in query_split])]
         else:
-            matches = [
-                i for i in self.index
-                if all([
-                    k.lower() in i.lower() for k in keywords
-                ])
-            ]
+            matches = [i for i in self.index if
+                all([q in i.lower() for q in query_split])]
 
-        format_matches = [
-            m for m in matches
-            if m.split('.')[-1].lower() == format.lower()
-        ]
-        return format_matches
+        if format.lower() != 'all':
+            matches = [m for m in matches if
+                m.split('.')[-1].lower() in format_split]
+
+        return matches
 
 
 if __name__ == '__main__':

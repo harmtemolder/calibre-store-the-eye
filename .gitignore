@@ -4,6 +4,7 @@
 *.gz
 *.zip
 calibre
+polyglot
 
 # PyCharm
 .idea
