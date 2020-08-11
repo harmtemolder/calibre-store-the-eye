@@ -21,22 +21,99 @@ __copyright__ = '2020, harmtemolder <mail at harmtemolder.com>'
 __docformat__ = 'restructuredtext en'
 
 class TheEyeStorePlugin(StorePlugin):
-    def genesis(self):
-        debug_print('Initializing self.eye, loading or creating index')
+    def initialize(self):
+        """Called once when calibre plugins are initialized. Plugins are
+        re-initialized every time a new plugin is added.
+
+        :return: None
+        """
+        debug_print('The Eye::__init__.py:initialize:locals() =', locals())
 
         self.eye = TheEye(
             base_url='https://the-eye.eu/public/Books/Calibre_Libraries/',
             index_file=os.path.join(config_dir, 'plugins', 'The Eye.json.gz'))
 
-        debug_print('Initialized self.eye')
+        debug_print('The Eye::__init__.py:initialize:len(self.eye.index) =',
+                    len(self.eye.index))
+
+    def genesis(self):
+        """Plugin specific initialization.
+
+        :return: None
+        """
+        debug_print('The Eye::__init__.py:genesis:locals() =', locals())
+
+        if not hasattr(self, 'eye'):  # i.e. not initialized by initialize()
+            self.eye = TheEye(
+                base_url='https://the-eye.eu/public/Books/Calibre_Libraries/',
+                index_file=os.path.join(config_dir, 'plugins', 'The Eye.json.gz'))
+
+            debug_print('The Eye::__init__.py:genesis:len(self.eye.index) =',
+                        len(self.eye.index))
+
+    def update_cache(self, parent=None, timeout=60, force=False,
+                     suppress_progress=True):
+        """
+
+        :param parent:
+        :param timeout:
+        :param force:
+        :param suppress_progress:
+        :return: None
+        """
+        debug_print('The Eye::__init__.py:update_cache:locals() =', locals())
+
+        self.eye.refresh_index()  # TODO
+
+    def config_widget(self):
+        """See :class:`calibre.customize.Plugin` for details.
+
+        :return: None
+        """
+        debug_print('The Eye::__init__.py:config_widget:locals() =', locals())
+
+        raise NotImplementedError()
+
+        # return ('not implemented', 'please come again later')
+
+    def save_settings(self, config_widget):
+        """See :class:`calibre.customize.Plugin` for details.
+
+        :return: None
+        """
+        debug_print('The Eye::__init__.py:save_settings:locals() =', locals())
+
+        raise NotImplementedError()
+
+    def customization_help(self, gui=False):
+        """See :class:`calibre.customize.Plugin` for details.
+
+        :return: None
+        """
+        debug_print('The Eye::__init__.py:customization_help:locals() =',
+                    locals())
+
+        raise NotImplementedError()
 
     def search(self, query, max_results=10, timeout=60):
-        search_results = self.eye.search(query, format='EPUB')
+        """A generator that yields SearchResult objects. It searches
+        self.eye.index for matches containing all keywords.
+
+        :param query:
+        :param max_results:
+        :param timeout:
+        :yield: a SearchResult object
+        """
+        debug_print('The Eye::__init__.py:search:locals() =', locals())
+
+        # Defaults to EPUBs containing all keywords
+        search_results = self.eye.search(
+            query, mode='all', format='EPUB')
 
         for result in search_results[0:max_results]:
             parsed = urlparse.unquote(result)
 
-            debug_print('parsed = ', parsed)
+            debug_print('The Eye::__init__.py:search:parsed =', parsed)
 
             filename = parsed.split('/')[-1]
             stem = '.'.join(filename.split('.')[0:-1])
@@ -54,7 +131,8 @@ class TheEyeStorePlugin(StorePlugin):
             yield s
 
     def open(self, parent=None, detail_item=None, external=False):
-        debug_print('Opening ', detail_item)
+        debug_print('The Eye::__init__.py:open:locals() =', locals())
+
         parent_url = '/'.join(detail_item.split('/')[0:-1])
 
         if external or self.config.get('open_external', False):

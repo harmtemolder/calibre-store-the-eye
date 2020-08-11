@@ -13,6 +13,8 @@ import urllib2
 
 from bs4 import BeautifulSoup
 
+# from calibre.devices.usbms.driver import debug_print
+
 class TheEye:
     def __init__(self,
                  base_url='https://the-eye.eu/public/Books/Calibre_Libraries/',
