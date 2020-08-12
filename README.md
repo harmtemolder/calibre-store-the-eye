@@ -4,7 +4,7 @@ The Eye store plugin for calibre
 
 ## Installation
 
-Download the latest ZIP from here and follow these steps to add the plugin to calibre:
+Download the latest ZIP from [the “Releases” page](https://github.com/harmtemolder/calibre-store-the-eye/releases) and follow these steps to add the plugin to calibre:
 
 1. Open calibre
 1. Open Preferences (<kbd>⌘</kbd>+<kbd>,</kbd>)
