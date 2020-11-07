@@ -13,7 +13,6 @@ Download the latest ZIP from [the “Releases” page](https://github.com/harmte
 1. Point the dialog to the downloaded ZIP file
 1. Click “Apply”
 1. Quit and restart calibre
-1. Note that on the next run, you might have to wait a couple of minutes until an index is built
 
 Alternatively, run this in your terminal, pointing to the downloaded ZIP file:
 
@@ -23,8 +22,7 @@ calibre-customize -a "The Eye.zip"
 
 ## Setup
 
-* On the first run after installing the plugin will create a local index of The Eye.
-* Use the “Update Index” button in the plugin's preferences (“Preferences” > “Plugins” > select “The Eye” > “Customize plugin”) to update that local index, for example if you've been getting 404 errors when trying to download books.
+* Note that this plugin searches a local index of The Eye. Before being able to search, you’ll have to click the “Update Index” button in the plugin's preferences (“Preferences” > “Plugins” > select “The Eye” > “Customize plugin”) to create or update that local index.
 * In those plugin preferences you'll also find options to restrict results to a specific file format (e.g. “epub, mobi”).
 
 ## Testing & development
