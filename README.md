@@ -29,7 +29,7 @@ calibre-customize -a "The Eye.zip"
 
 ## Testing & development
 
-While working on any of the scripts, run this to shutdown calibre, update the plugin and restart in debug mode:
+While working on any of the scripts, run this from within this repository to shutdown calibre, update the plugin and restart in debug mode:
 
 ```shell
 calibre-debug -s && calibre-customize -b . && calibre-debug -g
@@ -38,13 +38,11 @@ calibre-debug -s && calibre-customize -b . && calibre-debug -g
 Or, when you're one step further, install the plugin as a user would and restart in debug mode:
 
 ```shell
-calibre-debug -s && ./zip.sh && calibre-customize -a "The Eye.zip" && calibre-debug -g
+calibre-debug -s && make && calibre-customize -a "The Eye.zip" && calibre-debug -g
 ```
 
 ## Build a release
 
-Run this to zip all PY files together:
-
 ```shell
-./zip.sh
+make
 ```
