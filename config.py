@@ -2,7 +2,7 @@
 
 from datetime import datetime
 
-# from calibre.ebooks.metadata.sources.update import debug_print
+from calibre.ebooks.metadata.sources.update import debug_print
 from calibre.gui2.store.basic_config import BasicStoreConfig
 from polyglot.builtins import unicode_type
 from PyQt5.Qt import (QCheckBox, QGridLayout, QGroupBox, QLabel, QLineEdit,
@@ -45,18 +45,23 @@ class TheEyeStoreConfigWidget(QWidget):
         update_group_box.setTitle(_('Update Index'))
         self.l.addWidget(update_group_box)
         update_group_box_layout = QGridLayout(update_group_box)
+
         update_label = QLabel(_('This plugin stores an index of The Eye locally'
                                 '. This has {}. If you encounter 404 errors whe'
                                 'n trying to download books, you might want to '
                                 'update the index.'.format((
-            'never been done' if self.last_update < datetime(2000, 1,
-                                                             1) else 'last been updated on {}'.format(
-                self.last_update.strftime('%Y-%m-%d'))))))
+            'never been done' if self.last_update < datetime(
+                2000, 1, 1) else 'last been updated on {}'.format(
+                    self.last_update.strftime('%Y-%m-%d'))))))
+
         update_group_box_layout.addWidget(update_label)
         update_pushbutton = QPushButton(_('Update Index'))
         update_pushbutton.clicked.connect(
-            lambda:plugin.update_cache(timeout=300, force=True,
+            lambda:plugin.update_cache(
+                timeout=300,
+                force=True,
                 suppress_progress=False))
+
         update_group_box_layout.addWidget(update_pushbutton)
 
         # Add group with text to layout
@@ -74,8 +79,8 @@ class TheEyeStoreConfigWidget(QWidget):
     def load_setings(self, plugin):
         config = plugin.config
 
-        # debug_print('The Eye::config.py:TheEyeStoreConfigWidget:load_setings:co'
-        #             'nfig =', config)
+        debug_print('The Eye::config.py:TheEyeStoreConfigWidget:load_setings:co'
+                    'nfig =', config)
 
         self.format.setText(config.get('format', ''))
         self.mode_all.setChecked(config.get('mode_all', True))
@@ -100,8 +105,8 @@ class TheEyeStoreConfig(BasicStoreConfig):
 
         :return: None
         """
-        # debug_print('The Eye::config.py:TheEyeStoreConfig:save_settings:vars('
-        #             'self) =', vars(self))
+        debug_print('The Eye::config.py:TheEyeStoreConfig:save_settings:vars('
+                    'self) =', vars(self))
 
         self.config['mode_all'] = config_widget.mode_all.isChecked()
         self.config['format'] = unicode_type(config_widget.format.text())
