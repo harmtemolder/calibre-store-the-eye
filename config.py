@@ -1,7 +1,4 @@
-#!/usr/bin/env python2
-
-from __future__ import (absolute_import, division, print_function,
-    unicode_literals)
+#!/usr/bin/env python3
 
 from datetime import datetime
 

@@ -1,11 +1,8 @@
-#!/usr/bin/env python2
-
-from __future__ import (absolute_import, division, print_function,
-                        unicode_literals)
+#!/usr/bin/env python3
 
 from datetime import datetime
 import os
-import urlparse
+from urllib.parse import urlparse
 
 from calibre.customize import StoreBase
 from calibre.gui2 import open_url
@@ -15,8 +12,8 @@ from calibre.gui2.store.web_store_dialog import WebStoreDialog
 from calibre.utils.config import config_dir, JSONConfig
 from PyQt5.Qt import QUrl
 
-from .the_eye import TheEye
-from .config import TheEyeStoreConfig
+from calibre_plugins.the_eye.main import TheEye
+from calibre_plugins.the_eye.config import TheEyeStoreConfig
 
 __license__ = 'GNU GPLv3'
 __copyright__ = '2020, harmtemolder <mail at harmtemolder.com>'
