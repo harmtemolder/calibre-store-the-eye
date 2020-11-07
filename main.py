@@ -14,8 +14,7 @@ import os
 import sys
 from urllib.request import urlopen, Request
 
-from calibre import prints
-from calibre.constants import DEBUG
+from calibre.devices.usbms.driver import debug_print
 from calibre.utils.config import config_dir
 
 # sys.path.append('/Applications/PyCharm.app/Contents/debug-eggs/pydevd-pycharm.egg')
@@ -40,12 +39,9 @@ class TheEye:
             with gzip.open(self.index_file, mode='rt',
                            encoding='UTF-8') as json_gzip:
                 self.index = json.load(json_gzip)
-            debug_print(
-                'main.py:TheEye:load_index: loaded index from {}'.format(
-                    self.index_file))
         else:
-            debug_print('main.py:TheEye:load_index: {} does not exist'.format(
-                self.index_file))
+            debug_print('The Eye::main.py:TheEye:load_index: cannot load index')
+
 
     def _get_links(self, url):
         """Request a URL and parse hrefs from the result.
@@ -103,9 +99,6 @@ class TheEye:
         # pydevd_pycharm.settrace(
         #     'localhost', port=12345, stdoutToServer=True,stderrToServer=True)
 
-        debug_print('main.py:TheEye:refresh_index: refreshing '
-                    'index...')
-
         self.index = self._crawl_links(self.base_url)
 
         with gzip.open(self.index_file, mode='wt',
@@ -114,9 +107,6 @@ class TheEye:
 
         config['last_update'] = datetime.now().timestamp()
         config.commit()
-
-        debug_print('main.py:TheEye:refresh_index: stored index as {}'.format(
-            self.index_file))
 
     def search(self, query, mode='all', format='ALL'):
         """Search the index for any or all words in the given query
@@ -131,12 +121,9 @@ class TheEye:
         #     'localhost', port=12345, stdoutToServer=True,stderrToServer=True)
 
         if self.index is None:
-            debug_print('main.py:TheEye:search: trying to search without an '
-                        'index')
-
+            debug_print('The Eye::main.py:TheEye:search: cannot search without '
+                        'an index')
             return False
-
-        # set_trace()
 
         query_split = query.decode().lower().split(' ')
         format_split = [f.strip() for f in format.lower().split(',')]
@@ -153,11 +140,6 @@ class TheEye:
                 m.split('.')[-1].lower() in format_split]
 
         return matches
-
-
-def debug_print(*args, **k):
-    if DEBUG:
-        prints('The Eye::', *args, **k)
 
 
 if __name__ == '__main__':
