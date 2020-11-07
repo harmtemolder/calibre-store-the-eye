@@ -1,15 +1,10 @@
 # Project-specific
-*.pkl
 *.json
 *.gz
 *.zip
-calibre
-polyglot
 
-VSCodium
+VSCodium & PyCharm
 *.code-workspace
-
-# PyCharm
 .idea
 
 # Byte-compiled / optimized / DLL files
