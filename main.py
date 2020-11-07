@@ -1,24 +1,24 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 
 """A Python class to handle searching in, and downloading from, The
 Eye's open directory. Technically it is not limited to e-books, but that
 is what I will use it for.
 """
-from __future__ import (absolute_import, division, print_function,
-    unicode_literals)
 
+from bs4 import BeautifulSoup
 import gzip
 import itertools
 import json
 import os
-import urllib2
+from urllib.request import urlopen, Request
 
-from bs4 import BeautifulSoup
+from calibre.ebooks.metadata.sources.update import debug_print
+from calibre.rpdb import set_trace
 
 
 class TheEye:
     def __init__(self,
-                 base_url='https://the-eye.eu/public/Books/Calibre_Libraries/',
+                 base_url='https://the-eye.eu/public/Books/calibre_Libraries/',
                  index_file='./the_eye.json.gz'):
 
         self.base_url = base_url
@@ -29,11 +29,12 @@ class TheEye:
         """Tries to load a local index from a JSON file. Creates a new
         file and index if there is none.
 
-        :return: the index as a list of URLs pointing to files
+        :return: None
         """
         if os.path.isfile(self.index_file):
-            with gzip.open(self.index_file, mode='rb') as index_json:
-                self.index = json.loads(index_json.read())
+            with gzip.open(self.index_file, mode='rt', encoding='UTF-8') as json_gzip:
+                set_trace()
+                self.index = json.load(json_gzip)
         else:
             self.refresh_index()
 
@@ -43,7 +44,7 @@ class TheEye:
         :param url: str pointing to a page within The Eye's /public/
         :return: list of hrefs on the page, within <pre>
         """
-        r = urllib2.urlopen(urllib2.Request(url, headers={
+        r = urlopen(Request(url, headers={
             'User-agent':'Mozilla/5.0 (Windows NT 10.0; ) AppleWebKit/'
                          '537.36 (KHTML, like Gecko) Chrome/83.0.4086.'
                          '0 Safari/537.36'}))
@@ -59,10 +60,10 @@ class TheEye:
         anchors = pre.find_all('a')
 
         # Create a list of absolute URLs from the hrefs
-        hrefs = [(url + a['href'].encode('utf-8')) for a in anchors]
+        hrefs = [(url + a['href']) for a in anchors]
 
         # Drop the first href, since that points to the parent directory
-        return hrefs[1:]
+        return hrefs[1:3]  # TODO Remove the `3` when it's ready for production
 
     def _crawl_links(self, url):
         """Gets all links from a page, then gets all links from the
@@ -71,6 +72,10 @@ class TheEye:
         :param url: str pointing to a page to start crawling from
         :return: list of URLs of files (i.e. URLs not ending in '/')
         """
+        debug_print(
+            'The Eye::main.py:TheEye:_crawl_links:url =',
+            url)
+
         links = self._get_links(url)
 
         pages = [l for l in links if l[-1] == '/']
@@ -87,15 +92,24 @@ class TheEye:
     def refresh_index(self):
         """To be able to search within the directory with any reasonable
         speed, we need to keep a local index. To be compatible with
-        Calibre, this index needs to be stored in a JSON file. This
+        calibre, this index needs to be stored in a JSON file. This
         function refreshes that local index.
 
         :return: None
         """
+        debug_print(
+            'The Eye::main.py:TheEye:refresh_index:self.index_file =',
+            self.index_file)
+
         self.index = self._crawl_links(self.base_url)
 
-        with gzip.open(self.index_file, mode='wb') as index_json:
-            index_json.write(json.dumps(self.index, indent=4))
+        debug_print(
+            'The Eye::main.py:TheEye:refresh_index:self.index =',
+            self.index)
+
+        with gzip.open(self.index_file, mode='wt', encoding='UTF-8') as json_gzip:
+            set_trace()
+            json.dump(self.index, json_gzip)
 
     def search(self, query, mode='all', format='ALL'):
         """Search the index for any or all words in the given query
@@ -124,7 +138,7 @@ class TheEye:
 
 
 if __name__ == '__main__':
-    eye = TheEye('https://the-eye.eu/public/Books/Calibre_Libraries/')
+    eye = TheEye('https://the-eye.eu/public/Books/calibre_Libraries/')
 
     # Make sure to refresh the index after changing the base URL
     # eye.refresh_index()
