@@ -1,0 +1,5 @@
+<p>The Eye</p>
+<ul>
+  <li>Access The Eye directly from calibre.</li>
+  <li>Please report any errors or requests on <a href="https://github.com/harmtemolder/calibre-store-the-eye/issues">this plugin’s GitHub repository page</a>.</li>
+</ul>

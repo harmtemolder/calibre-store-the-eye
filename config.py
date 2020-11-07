@@ -2,11 +2,13 @@
 
 from datetime import datetime
 
-from calibre.ebooks.metadata.sources.update import debug_print
 from calibre.gui2.store.basic_config import BasicStoreConfig
 from polyglot.builtins import unicode_type
 from PyQt5.Qt import (QCheckBox, QGridLayout, QGroupBox, QLabel, QLineEdit,
     QPushButton, QWidget, QVBoxLayout)
+
+# from .main import debug_print
+from calibre_plugins.the_eye.main import debug_print
 
 
 class TheEyeStoreConfigWidget(QWidget):
@@ -46,13 +48,18 @@ class TheEyeStoreConfigWidget(QWidget):
         self.l.addWidget(update_group_box)
         update_group_box_layout = QGridLayout(update_group_box)
 
+        last_update_str = datetime.fromtimestamp(self.last_update).strftime(
+            '%Y-%m-%d')
+
         update_label = QLabel(_('This plugin stores an index of The Eye locally'
-                                '. This has {}. If you encounter 404 errors whe'
-                                'n trying to download books, you might want to '
-                                'update the index.'.format((
-            'never been done' if self.last_update < datetime(
-                2000, 1, 1) else 'last been updated on {}'.format(
-                    self.last_update.strftime('%Y-%m-%d'))))))
+                                '. This has {}. If you cannot find any books, o'
+                                'r encounter 404 errors when trying to download'
+                                ' books, you might want to update the index. No'
+                                'te that this will take several minutes, depend'
+                                'ing on your internet speed.'.format((
+            'never been done'
+            if self.last_update < 946695600
+            else 'last been updated on {}'.format(last_update_str)))))
 
         update_group_box_layout.addWidget(update_label)
         update_pushbutton = QPushButton(_('Update Index'))
@@ -79,12 +86,12 @@ class TheEyeStoreConfigWidget(QWidget):
     def load_setings(self, plugin):
         config = plugin.config
 
-        debug_print('The Eye::config.py:TheEyeStoreConfigWidget:load_setings:co'
+        debug_print('config.py:TheEyeStoreConfigWidget:load_setings:co'
                     'nfig =', config)
 
         self.format.setText(config.get('format', ''))
         self.mode_all.setChecked(config.get('mode_all', True))
-        self.last_update = config.get('last_update', datetime.fromtimestamp(0))
+        self.last_update = config.get('last_update', 0.0)
 
 
 class TheEyeStoreConfig(BasicStoreConfig):
@@ -105,7 +112,7 @@ class TheEyeStoreConfig(BasicStoreConfig):
 
         :return: None
         """
-        debug_print('The Eye::config.py:TheEyeStoreConfig:save_settings:vars('
+        debug_print('config.py:TheEyeStoreConfig:save_settings:vars('
                     'self) =', vars(self))
 
         self.config['mode_all'] = config_widget.mode_all.isChecked()

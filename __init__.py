@@ -1,23 +1,25 @@
 #!/usr/bin/env python3
 
-from datetime import datetime
 import os
-from urllib.parse import urlparse
+from urllib.parse import unquote
 
 from calibre.customize import StoreBase
 from calibre.gui2 import open_url
 from calibre.gui2.store import StorePlugin
 from calibre.gui2.store.search_result import SearchResult
 from calibre.gui2.store.web_store_dialog import WebStoreDialog
-from calibre.utils.config import config_dir, JSONConfig
+from calibre.utils.config import JSONConfig
 from PyQt5.Qt import QUrl
 
-from calibre_plugins.the_eye.main import TheEye
+# from .main import TheEye, debug_print
+from calibre_plugins.the_eye.main import TheEye, debug_print
+# from .config import TheEyeStoreConfig
 from calibre_plugins.the_eye.config import TheEyeStoreConfig
 
-__license__ = 'GNU GPLv3'
+__license__   = 'GNU GPLv3'
 __copyright__ = '2020, harmtemolder <mail at harmtemolder.com>'
 __docformat__ = 'restructuredtext en'
+
 
 class TheEyeStorePlugin(TheEyeStoreConfig, StorePlugin):
     def initialize(self):
@@ -26,19 +28,16 @@ class TheEyeStorePlugin(TheEyeStoreConfig, StorePlugin):
 
         :return: None
         """
-        self.eye = TheEye(
-            base_url='https://the-eye.eu/public/Books/Calibre_Libraries/',
-            index_file=os.path.join(config_dir, 'plugins/The Eye.json.gz'))
+        if not hasattr(self, 'eye'):
+            self.eye = TheEye()
 
     def genesis(self):
         """Plugin specific initialization.
 
         :return: None
         """
-        if not hasattr(self, 'eye'):  # i.e. not initialized by initialize()
-            self.eye = TheEye(
-                base_url='https://the-eye.eu/public/Books/Calibre_Libraries/',
-                index_file=os.path.join(config_dir, 'plugins', 'The Eye.json.gz'))
+        if not hasattr(self, 'eye'):
+            self.eye = TheEye()
 
     def update_cache(self, parent=None, timeout=60, force=False,
                      suppress_progress=True):
@@ -50,14 +49,10 @@ class TheEyeStorePlugin(TheEyeStoreConfig, StorePlugin):
         :param suppress_progress:
         :return: None
         """
-        if not hasattr(self, 'eye'):  # i.e. not initialized by initialize()
-            self.eye = TheEye(
-                base_url='https://the-eye.eu/public/Books/Calibre_Libraries/',
-                index_file=os.path.join(config_dir, 'plugins', 'The Eye.json.gz'))
+        if not hasattr(self, 'eye'):
+            self.eye = TheEye()
 
-        self.eye.refresh_index()
-        self.config['last_update'] = datetime.now()
-        self.config.commit()
+        self.eye.refresh_index(self.config)
 
     def search(self, query, max_results=10, timeout=60):
         """A generator that yields SearchResult objects. It searches
@@ -68,6 +63,9 @@ class TheEyeStorePlugin(TheEyeStoreConfig, StorePlugin):
         :param timeout:
         :yield: a SearchResult object
         """
+        if not hasattr(self, 'eye'):
+            self.eye = TheEye()
+
         search_mode = ('all' if self.config.get('mode_all', True) else 'any')
         search_format = self.config.get('format', '')
 
@@ -77,7 +75,7 @@ class TheEyeStorePlugin(TheEyeStoreConfig, StorePlugin):
             format=('ALL' if search_format == '' else search_format))
 
         for result in search_results[0:max_results]:
-            parsed = urlparse.unquote(result)
+            parsed = unquote(result)
 
             filename = parsed.split('/')[-1]
             stem = '.'.join(filename.split('.')[0:-1])
@@ -107,12 +105,13 @@ class TheEyeStorePlugin(TheEyeStoreConfig, StorePlugin):
             d.exec_()
 
 class TheEyeStore(StoreBase):
-    name = 'The Eye'
-    description = 'Access The Eye directly from calibre.'
-    version = (0, 1, 0)
-    author = 'harmtemolder'
-    drm_free_only = True
-    config = JSONConfig('plugins/The Eye.json')
+    name                    = 'The Eye'
+    description             = 'Access The Eye directly from calibre.'
+    author                  = 'harmtemolder'
+    version                 = (0, 2, 0)
+    minimum_calibre_version = (5, 0, 1)  # Because Python 3
+    drm_free_only           = True
+    config                  = JSONConfig(os.path.join('plugins', 'The Eye.json'))
 
     def load_actual_plugin(self, gui):
         self.actual_plugin_object = TheEyeStorePlugin(
