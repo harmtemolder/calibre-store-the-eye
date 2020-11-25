@@ -56,7 +56,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
-## 0.2.1-alpha: 2020-11-25
+## [0.2.1-alpha]: 2020-11-25
 ### Added
 - `TODO` file
 - Changelog in `README.md`
@@ -71,4 +71,5 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### Removed
 - `if __name__ == "__main__"` sections from `main.py` and `config.py`
 
-[Unreleased]: https://git.sr.ht/~harmtemolder/koreader-calibre-plugin/tree
+[Unreleased]: https://github.com/harmtemolder/calibre-store-the-eye/archive/master.zip
+[0.2.1-alpha]: https://github.com/harmtemolder/calibre-store-the-eye/releases/tag/v0.2.1-alpha
