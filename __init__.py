@@ -1,9 +1,13 @@
 #!/usr/bin/env python3
 
+from functools import partial
 import os
+import sys
 from urllib.parse import unquote
 
+from calibre.constants import DEBUG, numeric_version
 from calibre.customize import StoreBase
+from calibre.devices.usbms.driver import debug_print as root_debug_print
 from calibre.gui2 import open_url
 from calibre.gui2.store import StorePlugin
 from calibre.gui2.store.search_result import SearchResult
@@ -11,14 +15,30 @@ from calibre.gui2.store.web_store_dialog import WebStoreDialog
 from calibre.utils.config import JSONConfig
 from PyQt5.Qt import QUrl
 
-# from .main import TheEye, debug_print
-from calibre_plugins.the_eye.main import TheEye, debug_print
-# from .config import TheEyeStoreConfig
+from calibre_plugins.the_eye.main import TheEye
 from calibre_plugins.the_eye.config import TheEyeStoreConfig
+
+if numeric_version >= (5, 5, 0):
+    module_debug_print = partial(root_debug_print, ' the_eye:__init__:', sep='')
+else:
+    module_debug_print = partial(root_debug_print, 'the_eye:__init__:')
 
 __license__   = 'GNU GPLv3'
 __copyright__ = '2020, harmtemolder <mail at harmtemolder.com>'
 __docformat__ = 'restructuredtext en'
+
+PYDEVD = True  # Used during debugging to connect to PyCharm’s remote debugging
+
+if DEBUG and PYDEVD:
+    try:
+        sys.path.append('/Applications/PyCharm.app/Contents/debug-eggs/pydevd'
+                        '-pycharm.egg')
+        import pydevd_pycharm
+        pydevd_pycharm.settrace(
+            'localhost', stdoutToServer=True, stderrToServer=True,
+            suspend=False)
+    except Exception as e:
+        module_debug_print('could not start pydevd_pycharm, e = ', e)
 
 
 class TheEyeStorePlugin(TheEyeStoreConfig, StorePlugin):
@@ -108,7 +128,7 @@ class TheEyeStore(StoreBase):
     name                    = 'The Eye'
     description             = 'Access The Eye directly from calibre.'
     author                  = 'harmtemolder'
-    version                 = (0, 2, 0)
+    version                 = (0, 2, 1)
     minimum_calibre_version = (5, 0, 1)  # Because Python 3
     drm_free_only           = True
     config                  = JSONConfig(os.path.join('plugins', 'The Eye.json'))

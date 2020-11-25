@@ -17,8 +17,10 @@ Download the latest ZIP from [the “Releases” page](https://github.com/harmte
 Alternatively, run this in your terminal, pointing to the downloaded ZIP file:
 
 ```shell
-calibre-customize -a "The Eye.zip"
+calibre-customize -a "The Eye vX.X.X.zip"
 ```
+
+Where `X.X.X` is the release you’ve downloaded.
 
 ## Setup
 
@@ -36,11 +38,37 @@ calibre-debug -s && calibre-customize -b . && calibre-debug -g
 Or, when you're one step further, install the plugin as a user would and restart in debug mode:
 
 ```shell
-calibre-debug -s && make && calibre-customize -a "The Eye.zip" && calibre-debug -g
+calibre-debug -s && make && calibre-customize -a "releases/The Eye vX.X.X.zip" && calibre-debug -g
 ```
+
+Where `X.X.X` is the release you’re testing.
 
 ## Build a release
 
 ```shell
 make
 ```
+
+## Changelog
+All notable changes to this project will be documented here.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [Unreleased]
+
+## 0.2.1-alpha: 2020-11-25
+### Added
+- `TODO` file
+- Changelog in `README.md`
+- More `debug_print`
+
+### Changed
+- Fixed `gzip` writing corrupt archives
+- Reordered config window
+- `make zip` now zips into `releases` folder and numbered
+- `pydevd_pycharm` now handled more cleanly, with the `PYDEVD` variable
+
+### Removed
+- `if __name__ == "__main__"` sections from `main.py` and `config.py`
+
+[Unreleased]: https://git.sr.ht/~harmtemolder/koreader-calibre-plugin/tree

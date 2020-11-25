@@ -7,22 +7,25 @@ is what I will use it for.
 
 from bs4 import BeautifulSoup
 from datetime import datetime
+from functools import partial
 import gzip
 import itertools
 import json
 import os
-import sys
 from urllib.request import urlopen, Request
 
-from calibre.devices.usbms.driver import debug_print
+from calibre.constants import numeric_version
+from calibre.devices.usbms.driver import debug_print as root_debug_print
+from calibre.gui2 import error_dialog, warning_dialog, info_dialog
 from calibre.utils.config import config_dir
 
-# sys.path.append('/Applications/PyCharm.app/Contents/debug-eggs/pydevd-pycharm.egg')
-# import pydevd_pycharm
-
 DEFAULT_BASE_URL = 'https://the-eye.eu/public/Books/Calibre_Libraries/'
-DEFAULT_INDEX_FILE = os.path.join(config_dir, 'plugins', 'The Eye.json.tar.gz')
+DEFAULT_INDEX_FILE = os.path.join(config_dir, 'plugins', 'The Eye.json.gz')
 
+if numeric_version >= (5, 5, 0):
+    module_debug_print = partial(root_debug_print, ' the_eye:main:', sep='')
+else:
+    module_debug_print = partial(root_debug_print, 'the_eye:main:')
 
 class TheEye:
     def __init__(self, base_url=DEFAULT_BASE_URL,
@@ -35,12 +38,36 @@ class TheEye:
     def load_index(self):
         """Try to load a local index from a JSON file.
         """
+        debug_print = partial(module_debug_print, 'TheEye:load_index:')
+
         if os.path.isfile(self.index_file):
-            with gzip.open(self.index_file, mode='rt',
-                           encoding='UTF-8') as json_gzip:
-                self.index = json.load(json_gzip)
+            try:
+                with gzip.open(self.index_file, mode='rt',
+                               encoding='UTF-8') as json_gzip:
+                    self.index = json.load(json_gzip)
+            except Exception as e:
+                debug_print('could not load index because of ', e)
+                error_dialog(
+                    None,
+                    'Could not load The Eye index',
+                    'Could not load The Eye index from {}'.format(
+                        self.index_file),
+                    det_msg=e,
+                    show=True
+                )
+            else:
+                debug_print('loaded index from {}'.format(self.index_file))
         else:
-            debug_print('The Eye::main.py:TheEye:load_index: cannot load index')
+            debug_print('index file does not exist at {}'.format(
+                self.index_file))
+            error_dialog(
+                None,
+                'No The Eye index file found',
+                'No The Eye index file found at {}. Please go to this '
+                'plugin’s configuration and click “Update Index”.'.format(
+                    self.index_file),
+                show=True
+            )
 
 
     def _get_links(self, url):
@@ -49,13 +76,19 @@ class TheEye:
         :param url: str pointing to a page within The Eye's /public/
         :return: list of hrefs on the page, from within <pre> tags
         """
+        debug_print = partial(module_debug_print, 'TheEye:_crawl_links:')
+
         user_agent = 'Mozilla/5.0 (Windows NT 10.0; ) AppleWebKit/537.36 (KHT' \
                      'ML, like Gecko) Chrome/83.0.4086.0 Safari/537.36'
 
-        r = urlopen(Request(url, headers={'User-agent': user_agent}))
-
-        soup = BeautifulSoup(r.read(), 'html.parser')
-        r.close()
+        try:
+            r = urlopen(Request(url, headers={'User-agent': user_agent}))
+            soup = BeautifulSoup(r.read(), 'html.parser')
+            r.close()
+        except Exception as e:
+            debug_print('could not open {} because {}. Skipping...'.format(
+                url, e))
+            return []
 
         pre = soup.find('pre')
 
@@ -77,6 +110,9 @@ class TheEye:
         :param url: str pointing to a page to start crawling from
         :return: list of URLs of files (i.e. URLs not ending in '/')
         """
+        debug_print = partial(module_debug_print, 'TheEye:_crawl_links:')
+        debug_print('crawling {}'.format(url))
+
         links = self._get_links(url)
 
         pages = [l for l in links if l[-1] == '/']
@@ -96,15 +132,16 @@ class TheEye:
         calibre, this index is stored in a JSON file. This function
         refreshes that local index.
         """
-        # pydevd_pycharm.settrace(
-        #     'localhost', port=12345, stdoutToServer=True,stderrToServer=True)
+        debug_print = partial(module_debug_print, 'TheEye:refresh_index:')
 
+        debug_print('refreshing index from {}'.format(self.base_url))
         self.index = self._crawl_links(self.base_url)
 
-        with gzip.open(self.index_file, mode='wt',
-                       encoding='UTF-8') as json_gzip:
-            json.dump(self.index, json_gzip)
+        debug_print('compressing index into {}'.format(self.index_file))
+        with gzip.open(self.index_file, mode='wb') as json_gzip:
+            json_gzip.write(json.dumps(self.index).encode())
 
+        debug_print('writing `last_update` to config file')
         config['last_update'] = datetime.now().timestamp()
         config.commit()
 
@@ -117,12 +154,10 @@ class TheEye:
                      present to match. Defaults to 'all'
         :return: list of matching items
         """
-        # pydevd_pycharm.settrace(
-        #     'localhost', port=12345, stdoutToServer=True,stderrToServer=True)
+        debug_print = partial(module_debug_print, 'TheEye:search:')
 
         if self.index is None:
-            debug_print('The Eye::main.py:TheEye:search: cannot search without '
-                        'an index')
+            debug_print('cannot search without an index')
             return False
 
         query_split = query.decode().lower().split(' ')
@@ -139,13 +174,5 @@ class TheEye:
             matches = [m for m in matches if
                 m.split('.')[-1].lower() in format_split]
 
+        debug_print('found {} match(es) for {}'.format(len(matches), query))
         return matches
-
-
-if __name__ == '__main__':
-    eye = TheEye()
-
-    # Make sure to refresh the index after changing the base URL
-    eye.refresh_index()
-
-    print('\n'.join(eye.search('mahatma gandhi', format='EPUB')))

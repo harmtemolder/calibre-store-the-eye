@@ -1,10 +1,8 @@
-zip_file = The Eye.zip
+version = 0.2.1-alpha
+zip_file = releases/The Eye v$(version).zip
 zip_contents = *.py LICENSE *.md *.txt
 
-all: clean zip
-
-clean:
-	@ rm -f "$(zip_file)"  && echo "removed old $(zip_file)"
+all: zip
 
 zip:
-	@ zip "$(zip_file)" $(zip_contents) && echo "built new $(zip_file)"
+	@ echo "creating new $(zip_file)" && zip "$(zip_file)" $(zip_contents) && echo "created new $(zip_file)"

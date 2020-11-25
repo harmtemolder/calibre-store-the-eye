@@ -1,0 +1,26 @@
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - beautifulsoup4
+  - ca-certificates
+  - certifi
+  - libcxx
+  - libffi
+  - ncurses
+  - openssl
+  - pip
+  - python
+  - python_abi
+  - readline
+  - setuptools
+  - soupsieve
+  - sqlite
+  - tk
+  - wheel
+  - xz
+  - zlib
+  - pip:
+    - pyqt5
+    - pyqt5-sip
+prefix: /Users/harmtemolder/GitHub/calibre/env
