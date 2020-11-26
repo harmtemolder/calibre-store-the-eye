@@ -139,7 +139,7 @@ class TheEye:
 
         debug_print('compressing index into {}'.format(self.index_file))
         with gzip.open(self.index_file, mode='wb') as json_gzip:
-            json_gzip.write(json.dumps(self.index).encode())
+            json_gzip.write(json.dumps(self.index, indent=4).encode())
 
         debug_print('writing `last_update` to config file')
         config['last_update'] = datetime.now().timestamp()
