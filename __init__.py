@@ -128,7 +128,7 @@ class TheEyeStore(StoreBase):
     name                    = 'The Eye'
     description             = 'Access The Eye directly from calibre.'
     author                  = 'harmtemolder'
-    version                 = (0, 2, 1)
+    version                 = (0, 2, 2)
     minimum_calibre_version = (5, 0, 1)  # Because Python 3
     drm_free_only           = True
     config                  = JSONConfig(os.path.join('plugins', 'The Eye.json'))
