@@ -69,10 +69,21 @@ class TheEyeStorePlugin(TheEyeStoreConfig, StorePlugin):
         :param suppress_progress:
         :return: None
         """
+        debug_print = partial(
+            module_debug_print, 'TheEyeStorePlugin:update_cache:')
         if not hasattr(self, 'eye'):
             self.eye = TheEye()
 
-        self.eye.refresh_index(self.config)
+        if force:
+            debug_print('refreshing index because force = ', force)
+            show_progress = not suppress_progress
+            self.eye.refresh_index(self.config, show_progress)
+            debug_print('refreshed index')
+            return True
+        else:
+            debug_print('did not refresh index because force = ', force)
+            return False
+
 
     def search(self, query, max_results=10, timeout=60):
         """A generator that yields SearchResult objects. It searches
@@ -128,7 +139,7 @@ class TheEyeStore(StoreBase):
     name                    = 'The Eye'
     description             = 'Access The Eye directly from calibre.'
     author                  = 'harmtemolder'
-    version                 = (0, 2, 2)
+    version                 = (0, 2, 3)
     minimum_calibre_version = (5, 0, 1)  # Because Python 3
     drm_free_only           = True
     config                  = JSONConfig(os.path.join('plugins', 'The Eye.json'))

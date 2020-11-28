@@ -1,4 +1,4 @@
-version = 0.2.2-alpha
+version = 0.2.3-alpha
 zip_file = releases/The Eye v$(version).zip
 zip_contents = *.py LICENSE *.md *.txt
 

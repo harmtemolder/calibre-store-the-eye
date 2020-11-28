@@ -1,3 +1,5 @@
 # TODO
+- Check that the index is only updated when asked to do so
+- Add `QProgressDialog` when running `main.TheEye.refresh_index` with `show_progress=True`
 - Move `TheEyeStorePlugin` from `__init__.py` to `main.py`
 - Further code cleanup

@@ -55,6 +55,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [0.2.3-alpha]: 2020-11-28
+### Changed
+- Only update index when forced
+
 ## [0.2.2-alpha]: 2020-11-26
 ### Changed
 - Added line breaks in the index, in case anyone wants to open it in a text editor
@@ -78,3 +82,4 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 [Unreleased]: https://github.com/harmtemolder/calibre-store-the-eye/archive/master.zip
 [0.2.1-alpha]: https://github.com/harmtemolder/calibre-store-the-eye/releases/tag/v0.2.1-alpha
 [0.2.2-alpha]: https://github.com/harmtemolder/calibre-store-the-eye/releases/tag/v0.2.2-alpha
+[0.2.3-alpha]: https://github.com/harmtemolder/calibre-store-the-eye/releases/tag/v0.2.3-alpha

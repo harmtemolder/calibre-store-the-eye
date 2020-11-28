@@ -126,7 +126,7 @@ class TheEye:
 
         return files
 
-    def refresh_index(self, config):
+    def refresh_index(self, config, show_progress):
         """To be able to search within the directory with any reasonable
         speed, we need to keep a local index. To be compatible with
         calibre, this index is stored in a JSON file. This function
